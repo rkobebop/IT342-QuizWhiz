@@ -37,8 +37,16 @@ QuizWhiz solves these issues by providing a digital platform where students can 
 
 ## Developers Profile
 
-- Jamisola, Joshua Y.
-- Pavo, Raven King O.
+Name: Joshua Y. Jamisola
+Course & Year: BSIT-3
+
+
+  
+Name: Raven King O. Pavo
+Course & Year: BSIT-3
+
+"Insert Quote Here"
+  
 - Yap, Francis Niño B.
 
 
