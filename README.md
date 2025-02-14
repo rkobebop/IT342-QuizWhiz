@@ -39,6 +39,7 @@ QuizWhiz solves these issues by providing a digital platform where students can 
 
 - Jamisola, Joshua Y.
 - Pavo, Raven King O.
+  Course: BSIT-3
 - Yap, Francis Niño B.
 
 
