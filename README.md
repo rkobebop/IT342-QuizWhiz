@@ -37,5 +37,9 @@ QuizWhiz solves these issues by providing a digital platform where students can 
 
 ## Developers Profile
 
+- Jamisola, Joshua Y.
+- Pavo, Raven King O.
+- Yap, Francis Niño B.
+
 
 
