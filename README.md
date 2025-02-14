@@ -1,1 +1,4 @@
-# IT342-QuizWhiz
+# QuizWhiz
+
+# Product Description
+
