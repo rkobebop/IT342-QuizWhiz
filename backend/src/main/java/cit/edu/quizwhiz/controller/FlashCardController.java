@@ -1,7 +1,7 @@
 package cit.edu.quizwhiz.controller;
 
-import cit.edu.quizwhiz.entity.QuizWhizEntity;
-import cit.edu.quizwhiz.service.QuizWhizService;
+import cit.edu.quizwhiz.entity.FlashCardEntity;
+import cit.edu.quizwhiz.service.FlashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,43 +9,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/quizwhiz")
-public class QuizWhizController {
+@RequestMapping("/flashcards")
+public class FlashCardController {
 
     @Autowired
-    private QuizWhizService quizWhizService;
+    private FlashCardService flashCardService;
 
     @GetMapping("/")
     public String welcome() {
-        return "Welcome to QuizWhiz!";
+        return "Welcome to QuizWhiz!!";
     }
 
     @GetMapping
-    public List<QuizWhizEntity> getAllQuizWhiz() {
-        return quizWhizService.getAllQuizWhizzes();
+    public List<FlashCardEntity> getAllFlashCards() {
+        return flashCardService.getAllFlashCards();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuizWhizEntity> getQuizWhizById(@PathVariable Long id) {
-        return quizWhizService.getQuizWhizById(id)
+    public ResponseEntity<FlashCardEntity> getFlashCardById(@PathVariable Long id) {
+        return flashCardService.getFlashCardById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public QuizWhizEntity createQuizWhiz(@RequestBody QuizWhizEntity quizWhiz) {
-        return quizWhizService.createQuizWhiz(quizWhiz);
+    public FlashCardEntity createFlashCard(@RequestBody FlashCardEntity flashCard) {
+        return flashCardService.createFlashCard(flashCard);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QuizWhizEntity> updateQuizWhiz(
-            @PathVariable Long id, @RequestBody QuizWhizEntity quizWhizDetails) {
-        return ResponseEntity.ok(quizWhizService.updateQuizWhiz(id, quizWhizDetails));
+    public ResponseEntity<FlashCardEntity> updateFlashCard(
+            @PathVariable Long id, @RequestBody FlashCardEntity flashCardDetails) {
+        return ResponseEntity.ok(flashCardService.updateFlashCard(id, flashCardDetails));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteQuizWhiz(@PathVariable Long id) {
-        quizWhizService.deleteQuizWhiz(id);
+    public ResponseEntity<Void> deleteFlashCard(@PathVariable Long id) {
+        flashCardService.deleteFlashCard(id);
         return ResponseEntity.noContent().build();
     }
 }

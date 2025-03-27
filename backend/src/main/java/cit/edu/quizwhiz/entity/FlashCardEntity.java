@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "quizwhiz")
-public class QuizWhizEntity {
+public class FlashCardEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long quizWhizID;
+    private Long flashCardID;
 
     @Column(nullable = false)
     private Long studentID;
@@ -21,11 +21,11 @@ public class QuizWhizEntity {
 
     // Getters and Setters
     public Long getFlashCardID() {
-        return quizWhizID;
+        return flashCardID;
     }
 
     public void setFlashCardID(Long flashCardID) {
-        this.quizWhizID = flashCardID;
+        this.flashCardID = flashCardID;
     }
 
     public Long getStudentID() {
