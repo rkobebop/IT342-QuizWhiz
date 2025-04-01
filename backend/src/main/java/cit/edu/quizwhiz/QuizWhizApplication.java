@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -24,7 +25,7 @@ public class QuizWhizApplication {
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
-				.setDatabaseUrl("")
+				.setDatabaseUrl("https://quizwhiz-flashcards-default-rtdb.firebaseio.com")
 				.build();
 
 		FirebaseApp.initializeApp(options);
