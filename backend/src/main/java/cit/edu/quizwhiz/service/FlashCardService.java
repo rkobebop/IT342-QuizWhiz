@@ -38,7 +38,7 @@ public class FlashCardService {
     public FlashCardEntity createFlashCard(FlashCardEntity flashCard) throws ExecutionException, InterruptedException {
         ApiFuture<WriteResult> future = firestore.collection("flashcards")
                 .document(flashCard.getId()).set(flashCard);
-        future.get(); // Wait for Firestore write operation to complete
+        future.get();
         return flashCard;
     }
 

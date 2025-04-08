@@ -66,6 +66,12 @@
 		</dependency>
 		-->
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+
 		<!-- Firebase Admin SDK (Updated to 9.1.1) -->
 		<dependency>
 			<groupId>com.google.firebase</groupId>

@@ -9,7 +9,6 @@
 //import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 //import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 //
 //@Configuration
 //@EnableWebSecurity
@@ -21,15 +20,20 @@
 //                .csrf(csrf -> csrf.disable())
 //                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 //                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/user/create", "/user/login").permitAll()
+//                        .requestMatchers("/", "/login", "/register", "/user/create", "/user/login", "/css/**").permitAll()
 //                        .anyRequest().authenticated()
 //                )
+//                .formLogin(form -> form
+//                        .loginPage("/login")
+//                        .defaultSuccessUrl("/flashcards", true)
+//                        .permitAll()
+//                )
 //                .oauth2Login(oauth -> oauth
-//                        .defaultSuccessUrl("/user/welcome", true)
+//                        .loginPage("/login")
+//                        .defaultSuccessUrl("/flashcards", true)
 //                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(new OidcUserService()))
 //                )
-//                .formLogin(formLogin -> formLogin.defaultSuccessUrl("/flashcards", true))
-//                .logout(logout -> logout.logoutSuccessUrl("/user/login"))
+//                .logout(logout -> logout.logoutSuccessUrl("/login?logout"))
 //                .build();
 //    }
 //

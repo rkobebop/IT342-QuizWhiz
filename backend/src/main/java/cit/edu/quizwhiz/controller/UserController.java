@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -30,9 +31,21 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.createUser(user));
         } catch (Exception e) {
+            e.printStackTrace(); // temporary logging for debugging
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating user: " + e.getMessage());
         }
     }
+
+    //testing ra ni gamit thymeleaf
+//    @PostMapping("/create")
+//    public ResponseEntity<UserEntity> createUser(@ModelAttribute UserEntity user) {
+//        try {
+//            return ResponseEntity.ok(userService.createUser(user));
+//        } catch (Exception e) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating user: " + e.getMessage());
+//        }
+//    }
+
 
     // Read all users
     @GetMapping("/all")
@@ -46,7 +59,7 @@ public class UserController {
 
     // Read user by ID
     @GetMapping("/{userId}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable int userId) {
+    public ResponseEntity<UserEntity> getUserById(@PathVariable String userId) {
         try {
             Optional<UserEntity> user = userService.getUserById(userId);
             return user.map(ResponseEntity::ok)
@@ -58,7 +71,7 @@ public class UserController {
 
     // Update user details
     @PutMapping("/update/{userId}")
-    public ResponseEntity<UserEntity> updateUserDetails(@PathVariable int userId, @RequestBody UserEntity newUserDetails) {
+    public ResponseEntity<UserEntity> updateUserDetails(@PathVariable String userId, @RequestBody UserEntity newUserDetails) {
         try {
             return ResponseEntity.ok(userService.updateUser(userId, newUserDetails));
         } catch (Exception e) {
@@ -68,7 +81,7 @@ public class UserController {
 
     // Delete user by ID
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable int userId) {
+    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
         try {
             userService.deleteUser(userId);
             return ResponseEntity.ok("User deleted successfully");

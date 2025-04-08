@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+
+<form onsubmit="submitForm(event)">
+    <input type="text" name="firstName" placeholder="First Name" required />
+    <input type="text" name="lastName" placeholder="Last Name" required />
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Password" required />
+    <button type="submit">Register</button>
+</form>
+
+<script>
+    function submitForm(event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+
+        const data = {
+            firstName: form.firstName.value,
+            lastName: form.lastName.value,
+            email: form.email.value,
+            password: form.password.value
+        };
+
+        fetch("/user/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Request failed with status " + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Success:", data);
+            alert("User registered successfully!");
+            window.location.href = "/login";
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Registration failed.");
+        });
+    }
+</script>
+
+</body>
+</html>

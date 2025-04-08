@@ -7,10 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Objects;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
@@ -19,9 +16,13 @@ public class QuizWhizApplication {
 	public static void main(String[] args) throws IOException {
 		ClassLoader classLoader = QuizWhizApplication.class.getClassLoader();
 
-		File file = new File(Objects.requireNonNull(classLoader.getResource("serviceAccountKey.json")).getFile());
-		FileInputStream serviceAccount =
-				new FileInputStream(file.getAbsolutePath());
+		InputStream serviceAccount = QuizWhizApplication.class
+				.getClassLoader()
+				.getResourceAsStream("serviceAccountKey.json");
+
+		if (serviceAccount == null) {
+			throw new FileNotFoundException("serviceAccountKey.json not found in resources.");
+		}
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))

@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import com.google.cloud.Timestamp;
 import java.util.List;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
@@ -25,11 +26,13 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private String userId;
 
     @Column(nullable = false)
-    private String name;
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -38,10 +41,10 @@ public class UserEntity {
     private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 
     @Column(name = "updated_at", nullable = true)
-    private LocalDateTime updatedAt;
+    private Timestamp updatedAt;
 
 
     // Constructors
@@ -49,10 +52,11 @@ public class UserEntity {
         super();
     }
 
-    public UserEntity(int userId,String name, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserEntity(String userId,String firstName, String lastName, String email, String password, Timestamp createdAt, Timestamp updatedAt) {
         super();
         this.userId = userId;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.createdAt = createdAt;
@@ -60,20 +64,28 @@ public class UserEntity {
     }
 
     // Getters and Setters
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -92,31 +104,31 @@ public class UserEntity {
         this.password = password;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = Timestamp.now();
+        this.updatedAt = Timestamp.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = Timestamp.now();
     }
 
 }
