@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -54,7 +55,6 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-
     // Get user by ID
     public Optional<UserEntity> getUserById(String id) throws ExecutionException, InterruptedException {
         DocumentReference docRef = firestore.collection(COLLECTION_NAME).document(id);
@@ -90,6 +90,42 @@ public class UserService {
         return documents.isEmpty() ? Optional.empty()
                 : Optional.of(documents.get(0).toObject(UserEntity.class));
     }
+
+    public UserEntity createOrGetOAuthUser(String email, String fullName) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        // Check if the user already exists
+        ApiFuture<QuerySnapshot> query = db.collection("users")
+                .whereEqualTo("email", email)
+                .get();
+        List<QueryDocumentSnapshot> documents = query.get().getDocuments();
+
+        if (!documents.isEmpty()) {
+            // User already exists
+            return documents.get(0).toObject(UserEntity.class);
+        }
+
+        // Split fullName into first and last name
+        String[] nameParts = fullName.split(" ", 2);
+        String firstName = nameParts[0];
+        String lastName = nameParts.length > 1 ? nameParts[1] : "";
+
+        // Create new user
+        UserEntity user = new UserEntity();
+        user.setUserId(UUID.randomUUID().toString());
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setPassword(""); // no password for OAuth
+        user.setCreatedAt(Timestamp.now());
+        user.setUpdatedAt(Timestamp.now());
+
+        // Save to Firestore
+        db.collection("users").document(user.getUserId()).set(user);
+
+        return user;
+    }
+
 
     // Get user count
     public long getUserCount() throws ExecutionException, InterruptedException {
