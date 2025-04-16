@@ -17,12 +17,8 @@ import java.time.LocalDateTime;
 import com.google.cloud.Timestamp;
 import java.util.List;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-
-@Entity
-@Table(name = "users")
 public class UserEntity {
 
     @Id
