@@ -130,33 +130,33 @@ public class UserService {
     public UserEntity createOrGetOAuthUser(String email, String fullName) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
 
-        // Check if the user already exists
+        // Check if the user already exists in Firestore
         ApiFuture<QuerySnapshot> query = db.collection("users")
                 .whereEqualTo("email", email)
                 .get();
         List<QueryDocumentSnapshot> documents = query.get().getDocuments();
 
         if (!documents.isEmpty()) {
-            // User already exists
+            // User already exists, return the existing user
             return documents.get(0).toObject(UserEntity.class);
         }
 
-        // Split fullName into first and last name
+        // Split the full name into first and last name
         String[] nameParts = fullName.split(" ", 2);
         String firstName = nameParts[0];
         String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
-        // Create new user
+        // Create a new user
         UserEntity user = new UserEntity();
         user.setUserId(UUID.randomUUID().toString());
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
-        user.setPassword(""); // no password for OAuth
+        user.setPassword(""); // No password for OAuth users
         user.setCreatedAt(Timestamp.now());
         user.setUpdatedAt(Timestamp.now());
 
-        // Save to Firestore
+        // Save the user to Firestore
         db.collection("users").document(user.getUserId()).set(user);
 
         return user;

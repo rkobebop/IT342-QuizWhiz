@@ -10,6 +10,8 @@
     import org.springframework.http.HttpHeaders;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
+    import org.springframework.security.core.annotation.AuthenticationPrincipal;
+    import org.springframework.security.oauth2.core.user.OAuth2User;
     import org.springframework.web.bind.annotation.*;
     import org.springframework.web.server.ResponseStatusException;
 
@@ -130,29 +132,63 @@
         }
 
 
+        @PostMapping("/google")
+        public ResponseEntity<?> loginWithGoogle(@RequestBody Map<String, String> payload) {
+            System.out.println("Received Google login request. Payload keys: " + payload.keySet()); // Log received payload
 
-        @PostMapping("/google-login")
-        public ResponseEntity<UserEntity> loginWithGoogle(@RequestBody Map<String, String> payload) {
-            String idToken = payload.get("idToken");
+            String idToken = payload.get("credential");
+            System.out.println("Extracted ID token: " + (idToken != null ? "present" : "null")); // Don't log actual token
+
+            if (idToken == null || idToken.isEmpty()) {
+                System.out.println("ID token is missing");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID token is required");
+            }
 
             try {
-                // 1. Verify the Firebase ID token
+                System.out.println("Attempting to verify ID token...");
+                // Verify the Google ID token
                 FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+                System.out.println("Token verified. Email: " + firebaseToken.getEmail());
 
-                // 2. Extract email and name from the token
+                // Extract user information from the token
                 String email = firebaseToken.getEmail();
-                String fullName = firebaseToken.getName(); // "First Last"
+                String name = firebaseToken.getName(); // Full name
 
-                // 3. Create or retrieve user
-                UserEntity user = userService.createOrGetOAuthUser(email, fullName);
+                // Create or retrieve the user from Firestore
+                UserEntity user = userService.createOrGetOAuthUser(email, name);
 
-                // 4. Return user
-                return ResponseEntity.ok(user);
+                // Generate JWT token for the user
+                String jwt = jwtUtil.generateToken(user.getEmail());
 
-            } catch (FirebaseAuthException | ExecutionException | InterruptedException e) {
+                // Prepare response data
+                Map<String, Object> response = new HashMap<>();
+                response.put("user", user);
+                response.put("token", jwt);
+
+                return ResponseEntity.ok(response);
+
+            } catch (FirebaseAuthException e) {
+                System.err.println("Firebase auth error: " + e.getMessage());
                 e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Google login failed: " + e.getMessage());
+            } catch (Exception e) {
+                System.err.println("Unexpected error: " + e.getMessage());
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
             }
+        }
+
+
+        @GetMapping("/oauth-success")
+        public ResponseEntity<Map<String, String>> oauthSuccess(@AuthenticationPrincipal OAuth2User principal) {
+            String email = principal.getAttribute("email");
+            String jwtToken = jwtUtil.generateToken(email);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("token", jwtToken);
+            response.put("email", email);
+
+            return ResponseEntity.ok(response);
         }
 
 

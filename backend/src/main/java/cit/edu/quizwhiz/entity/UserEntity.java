@@ -1,69 +1,55 @@
 package cit.edu.quizwhiz.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import com.google.cloud.Timestamp;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserEntity {
-
-    @Id
     private String userId;
-
-    @Column(nullable = false)
     private String firstName;
-
-    @Column(nullable = false)
     private String lastName;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
     private String password;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
+    private String role; // STUDENT, EDUCATOR, ADMIN
+    private String profilePictureUrl;
     private Timestamp createdAt;
-
-    @Column(name = "updated_at", nullable = true)
     private Timestamp updatedAt;
 
+    // Empty constructor (required for Firestore deserialization)
+    public UserEntity() {}
 
-    // Constructors
-    public UserEntity() {
-        super();
-    }
-
-    public UserEntity(String userId,String firstName, String lastName, String email, String password, Timestamp createdAt, Timestamp updatedAt) {
-        super();
+    public UserEntity(String userId, String firstName, String lastName, String email,
+                      String password, String role, String profilePictureUrl) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.role = role;
+        this.profilePictureUrl = profilePictureUrl;
+        this.createdAt = Timestamp.now();
+        this.updatedAt = Timestamp.now();
+    }
+
+    // Converts UserEntity to a Map for Firestore
+    public Map<String, Object> toFirestoreMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("firstName", firstName);
+        map.put("lastName", lastName);
+        map.put("email", email);
+        map.put("password", password);
+        map.put("role", role);
+        map.put("profilePictureUrl", profilePictureUrl);
+        map.put("createdAt", createdAt);
+        map.put("updatedAt", updatedAt);
+        return map;
     }
 
     // Getters and Setters
     public String getUserId() {
         return userId;
     }
-
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -71,7 +57,6 @@ public class UserEntity {
     public String getFirstName() {
         return firstName;
     }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -79,7 +64,6 @@ public class UserEntity {
     public String getLastName() {
         return lastName;
     }
-
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -87,7 +71,6 @@ public class UserEntity {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -95,15 +78,27 @@ public class UserEntity {
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
 
     public Timestamp getCreatedAt() {
         return createdAt;
     }
-
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
@@ -111,20 +106,7 @@ public class UserEntity {
     public Timestamp getUpdatedAt() {
         return updatedAt;
     }
-
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = Timestamp.now();
-        this.updatedAt = Timestamp.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = Timestamp.now();
-    }
-
 }
