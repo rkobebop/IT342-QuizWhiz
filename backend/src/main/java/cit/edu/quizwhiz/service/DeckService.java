@@ -2,6 +2,7 @@ package cit.edu.quizwhiz.service;
 
 import cit.edu.quizwhiz.entity.DeckEntity;
 import com.google.api.core.ApiFuture;
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,16 @@ public class DeckService {
     }
 
     public DeckEntity createDeck(DeckEntity deck) throws ExecutionException, InterruptedException {
-        DocumentReference docRef = firestore.collection(COLLECTION_NAME).document(deck.getId());
+        DocumentReference docRef = firestore.collection(COLLECTION_NAME).document(); // Auto-generated ID
+        deck.setId(docRef.getId());
+        deck.setCreatedAt(Timestamp.now());
+        deck.setUpdatedAt(Timestamp.now());
+
         ApiFuture<WriteResult> future = docRef.set(deck);
         future.get(); // Wait for the operation to complete
         return deck;
     }
+
 
     public List<DeckEntity> getAllDecks() throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME).get();

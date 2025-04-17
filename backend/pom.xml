@@ -71,12 +71,6 @@
 		</dependency>
 		-->
 
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version>
-		</dependency>
-
 		<!-- JWT Support -->
 
 		<dependency>
@@ -103,7 +97,12 @@
 			<scope>runtime</scope>
 		</dependency>
 
-
+		<!-- Google Cloud SDK for Firestore -->
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>google-cloud-firestore</artifactId>
+			<version>3.8.0</version> <!-- Latest version -->
+		</dependency>
 
 		<!-- Firebase Admin SDK (Updated to 9.1.1) -->
 		<dependency>
@@ -118,6 +117,8 @@
 			<artifactId>google-auth-library-oauth2-http</artifactId>
 			<version>1.21.0</version>
 		</dependency>
+
+
 
 	</dependencies>
 

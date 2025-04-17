@@ -179,19 +179,6 @@
         }
 
 
-        @GetMapping("/oauth-success")
-        public ResponseEntity<Map<String, String>> oauthSuccess(@AuthenticationPrincipal OAuth2User principal) {
-            String email = principal.getAttribute("email");
-            String jwtToken = jwtUtil.generateToken(email);
-
-            Map<String, String> response = new HashMap<>();
-            response.put("token", jwtToken);
-            response.put("email", email);
-
-            return ResponseEntity.ok(response);
-        }
-
-
 
         // Get user count
         @GetMapping("/usercount")

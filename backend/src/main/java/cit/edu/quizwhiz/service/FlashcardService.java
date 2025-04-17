@@ -37,9 +37,10 @@ public class FlashcardService {
     }
 
     public FlashcardEntity createFlashcard(FlashcardEntity flashcard) throws ExecutionException, InterruptedException {
-        ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME)
-                .document(flashcard.getId()).set(flashcard);
-        future.get();
+        DocumentReference docRef = firestore.collection(COLLECTION_NAME).document(); // auto-generated ID
+        flashcard.setId(docRef.getId());
+        ApiFuture<WriteResult> future = docRef.set(flashcard);
+        future.get(); // Wait for write to complete
         return flashcard;
     }
 
