@@ -26,6 +26,8 @@ public class QuizWhizApplication {
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
+				.setProjectId("quizwhiz-flashcards")
+
 				.setDatabaseUrl("https://quizwhiz-flashcards-default-rtdb.firebaseio.com")
 				.build();
 

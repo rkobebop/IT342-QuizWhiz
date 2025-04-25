@@ -59,13 +59,50 @@
 			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 
-
+		<!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+		-->
 
+		<!-- JWT Support -->
+
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>4.3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Google Cloud SDK for Firestore -->
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>google-cloud-firestore</artifactId>
+			<version>3.8.0</version> <!-- Latest version -->
+		</dependency>
 
 		<!-- Firebase Admin SDK (Updated to 9.1.1) -->
 		<dependency>
@@ -80,6 +117,8 @@
 			<artifactId>google-auth-library-oauth2-http</artifactId>
 			<version>1.21.0</version>
 		</dependency>
+
+
 
 	</dependencies>
 
