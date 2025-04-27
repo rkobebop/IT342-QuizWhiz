@@ -51,10 +51,12 @@ public class DeckService {
 
     public DeckEntity updateDeck(String id, DeckEntity deckDetails) throws ExecutionException, InterruptedException {
         DocumentReference docRef = firestore.collection(COLLECTION_NAME).document(id);
+        deckDetails.setUpdatedAt(Timestamp.now());
         ApiFuture<WriteResult> future = docRef.set(deckDetails);
-        future.get(); // Wait for the update to complete
+        future.get();
         return deckDetails;
     }
+
 
     public void deleteDeck(String id) throws ExecutionException, InterruptedException {
         ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(id).delete();

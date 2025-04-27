@@ -65,4 +65,14 @@ public class FlashcardController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/getByDeckId/{deckId}")
+    public ResponseEntity<List<FlashcardEntity>> getFlashcardsByDeckId(@PathVariable String deckId) {
+        try {
+            List<FlashcardEntity> flashcards = flashcardService.getFlashcardsByDeckId(deckId);
+            return ResponseEntity.ok(flashcards);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

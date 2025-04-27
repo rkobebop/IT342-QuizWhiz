@@ -43,7 +43,7 @@ public class SecurityConfig {
                                 "/flashcards",
                                 "/oauth/**"
                         ).permitAll()
-                        .requestMatchers("/user/**").authenticated()
+                        .requestMatchers("/user/**","/deck/**").authenticated()
                         .anyRequest().authenticated()
 
                 )

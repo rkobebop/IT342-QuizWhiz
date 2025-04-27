@@ -35,13 +35,18 @@ public class UserService {
     }
 
     public UserEntity createUser(UserEntity user) throws ExecutionException, InterruptedException {
+        Optional<UserEntity> existingUser = findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(Timestamp.now());
         user.setUpdatedAt(Timestamp.now());
         DocumentReference docRef = firestore.collection(COLLECTION_NAME).document();
         user.setUserId(docRef.getId());
         ApiFuture<WriteResult> future = docRef.set(user);
-        future.get();  // Wait for operation to complete
+        future.get();
         return user;
     }
 

@@ -37,22 +37,39 @@ public class FlashcardService {
     }
 
     public FlashcardEntity createFlashcard(FlashcardEntity flashcard) throws ExecutionException, InterruptedException {
-        DocumentReference docRef = firestore.collection(COLLECTION_NAME).document(); // auto-generated ID
+        if (flashcard.getDeckId() == null || flashcard.getDeckId().isEmpty()) {
+            throw new IllegalArgumentException("Flashcard must have a valid deckId");
+        }
+
+        DocumentReference docRef = firestore.collection("flashcards").document();
         flashcard.setId(docRef.getId());
-        ApiFuture<WriteResult> future = docRef.set(flashcard);
-        future.get(); // Wait for write to complete
+        docRef.set(flashcard).get();
         return flashcard;
     }
 
     public FlashcardEntity updateFlashcard(String id, FlashcardEntity flashcardDetails) throws ExecutionException, InterruptedException {
         DocumentReference docRef = firestore.collection(COLLECTION_NAME).document(id);
+        flashcardDetails.setId(id); // Ensure id is correct
         ApiFuture<WriteResult> future = docRef.set(flashcardDetails);
         future.get();
         return flashcardDetails;
     }
 
+
     public void deleteFlashcard(String id) throws ExecutionException, InterruptedException {
         ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(id).delete();
         future.get();
+    }
+
+
+    public List<FlashcardEntity> getFlashcardsByDeckId(String deckId) throws ExecutionException, InterruptedException {
+        return firestore.collection("flashcards")
+                .whereEqualTo("deckId", deckId)
+                .get()
+                .get()
+                .getDocuments()
+                .stream()
+                .map(doc -> doc.toObject(FlashcardEntity.class))
+                .collect(Collectors.toList());
     }
 }

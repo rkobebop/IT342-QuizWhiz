@@ -1,13 +1,17 @@
 package cit.edu.quizwhiz.controller;
 
 import cit.edu.quizwhiz.entity.DeckEntity;
+import cit.edu.quizwhiz.entity.FlashcardEntity;
 import cit.edu.quizwhiz.service.DeckService;
+import cit.edu.quizwhiz.service.FlashcardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -17,6 +21,7 @@ public class DeckController {
 
     @Autowired
     private DeckService deckService;
+    private FlashcardService flashcardService;
 
     @PostMapping
     public ResponseEntity<DeckEntity> createDeck(@RequestBody DeckEntity deck) {
@@ -65,4 +70,15 @@ public class DeckController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/{id}/flashcards")
+    public ResponseEntity<List<FlashcardEntity>> getFlashcardsForDeck(@PathVariable String id) {
+        try {
+            List<FlashcardEntity> flashcards = flashcardService.getFlashcardsByDeckId(id);
+            return ResponseEntity.ok(flashcards);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

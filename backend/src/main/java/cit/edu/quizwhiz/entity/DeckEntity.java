@@ -9,19 +9,17 @@ public class DeckEntity {
     private String subject;
     private String category;
     private String userId; // Reference to UserEntity by ID
-    private List<FlashcardEntity> flashcards;
 
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
     public DeckEntity() {}
 
-    public DeckEntity(String id, String subject, String category, String userId, List<FlashcardEntity> flashcards) {
+    public DeckEntity(String id, String subject, String category, String userId) {
         this.id = id;
         this.subject = subject;
         this.category = category;
         this.userId = userId;
-        this.flashcards = flashcards;
         this.createdAt = Timestamp.now();
         this.updatedAt = Timestamp.now();
     }
@@ -38,9 +36,6 @@ public class DeckEntity {
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
-
-    public List<FlashcardEntity> getFlashcards() { return flashcards; }
-    public void setFlashcards(List<FlashcardEntity> flashcards) { this.flashcards = flashcards; }
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
