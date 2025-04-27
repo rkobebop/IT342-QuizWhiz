@@ -1,6 +1,7 @@
 package com.example.frontend_mobile
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -25,8 +26,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend_mobile.ui.theme.Frontend_mobileTheme
+import android.content.Intent
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.platform.LocalContext
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +50,13 @@ class HomeActivity : ComponentActivity() {
 @Composable
 fun HomeScreen() {
     val navController = rememberNavController()
-    val currentRoute by remember { derivedStateOf { navController.currentDestination?.route } }
+    // Add this to debug current route
+    val currentBackStack by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStack?.destination?.route
+
+    LaunchedEffect(Unit) {
+        Log.d("NAVIGATION", "Current route: $currentRoute")
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -60,7 +71,7 @@ fun HomeScreen() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     composable("home") { HomeContent(navController) }
-                    composable("profile") { ProfileContent() }
+                    composable("profile") { ProfileContent(navController) }
                     composable("notifications") { NotificationsScreen { navController.popBackStack() } }
                 }
             }
@@ -72,6 +83,7 @@ fun HomeScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavigationBar(navController: NavHostController, currentRoute: String?) {
+    val context = LocalContext.current
     NavigationBar(
         containerColor = Color(0xFF414162),
         contentColor = Color.White,
@@ -82,14 +94,12 @@ fun BottomNavigationBar(navController: NavHostController, currentRoute: String?)
                 Icon(
                     painter = painterResource(id = R.drawable.home),
                     contentDescription = "Home",
-                    tint = Color.White,
                     modifier = Modifier.size(28.dp)
                 )
             },
             label = {
                 Text(
                     "Home",
-                    color = Color.White,
                     fontSize = 14.sp,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -97,7 +107,11 @@ fun BottomNavigationBar(navController: NavHostController, currentRoute: String?)
             selected = currentRoute == "home",
             onClick = { navController.navigate("home") },
             colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color(0xFF414162) // Removes selection indicator
+                selectedIconColor = Color.White,
+                unselectedIconColor = Color.White.copy(alpha = 0.6f),
+                selectedTextColor = Color.White,
+                unselectedTextColor = Color.White.copy(alpha = 0.6f),
+                indicatorColor = Color(0xFF414162)
             )
         )
 
@@ -111,7 +125,10 @@ fun BottomNavigationBar(navController: NavHostController, currentRoute: String?)
                 )
             },
             selected = false,
-            onClick = { /* Handle add action */ },
+            onClick = {
+                val intent = Intent(context, CreateCardActivity::class.java)
+                context.startActivity(intent)
+            },
             label = null,
             colors = NavigationBarItemDefaults.colors(
                 indicatorColor = Color.Transparent
@@ -123,14 +140,12 @@ fun BottomNavigationBar(navController: NavHostController, currentRoute: String?)
                 Icon(
                     painter = painterResource(id = R.drawable.profile),
                     contentDescription = "Profile",
-                    tint = if (currentRoute == "profile") Color.White else Color.White.copy(alpha = 0.6f),
                     modifier = Modifier.size(28.dp)
                 )
             },
             label = {
                 Text(
                     "Profile",
-                    color = if (currentRoute == "profile") Color.White else Color.White.copy(alpha = 0.6f),
                     fontSize = 14.sp,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -138,7 +153,11 @@ fun BottomNavigationBar(navController: NavHostController, currentRoute: String?)
             selected = currentRoute == "profile",
             onClick = { navController.navigate("profile") },
             colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent
+                selectedIconColor = Color.White,
+                unselectedIconColor = Color.White.copy(alpha = 0.6f),
+                selectedTextColor = Color.White,
+                unselectedTextColor = Color.White.copy(alpha = 0.6f),
+                indicatorColor = Color(0xFF414162)
             )
         )
     }
@@ -326,14 +345,18 @@ fun HomeContent(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Flashcard List with improved spacing
+                val context = LocalContext.current
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(1.dp, Color.White, RoundedCornerShape(16.dp))
-                        .height(120.dp),
+                        .height(120.dp)
+                        .clickable {
+                            context.startActivity(Intent(context, OpenFlashcardsActivity::class.java))
+                        },
                     shape = RoundedCornerShape(16.dp),
                     color = Color(0xFF414162)
-                ) {
+                )  {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Column(
                             modifier = Modifier
@@ -378,18 +401,197 @@ fun HomeContent(navController: NavHostController) {
 }
 
 @Composable
-fun ProfileContent() {
+fun ProfileContent(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(Color(0xFF414162))
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Header (same as HomeContent)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "QuizWhiz",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Free Trial Badge
+                Surface(
+                    shape = RoundedCornerShape(50.dp),
+                    color = Color(0xFFFFD700)
+                ) {
+                    Text(
+                        text = "Free Trial",
+                        color = Color.Black,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(onClick = { navController.navigate("notifications") }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.notifications),
+                        contentDescription = "Notifications",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Profile picture with edit button
+        Box(
+            modifier = Modifier.size(120.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .background(Color(0xFF3D709F), CircleShape)
+            )
+
+            // Edit button
+            IconButton(
+                onClick = { /* Handle edit profile picture */ },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .background(Color(0xFFFFD700), CircleShape)
+                    .size(32.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.edit),
+                    contentDescription = "Edit Profile",
+                    tint = Color.Black,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Name
         Text(
-            text = "Profile Screen",
+            text = "Raven Pavo",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
         )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Settings card - now with outline only
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.White, RoundedCornerShape(16.dp)),
+            shape = RoundedCornerShape(16.dp),
+            color = Color(0xFF414162) // Same as background
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.settings),
+                    contentDescription = "Settings",
+                    tint = Color.White, // Changed to white
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = "Your Settings",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White // Changed to white
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Achievements",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Start) // This makes it left-aligned
+                .padding(bottom = 8.dp)
+        )
+
+        // Achievements card - now with outline only
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.White, RoundedCornerShape(16.dp)),
+            shape = RoundedCornerShape(16.dp),
+            color = Color(0xFF414162) // Same as background
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+
+
+                Text(
+                    text = "1-Week Streak",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White // Changed to white
+                )
+                Text(
+                    text = "Study next week to keep the streak!",
+                    color = Color.White.copy(alpha = 0.8f), // Changed to white
+                    fontSize = 14.sp
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Week days
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    listOf("S", "M", "T", "W", "T", "F", "S").forEach { day ->
+                        Text(
+                            text = day,
+                            color = Color.White, // Changed to white
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                // Dates
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    listOf("23", "24", "25", "26", "27", "28", "29").forEach { date ->
+                        Text(
+                            text = date,
+                            color = Color.White, // Changed to white
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -47,6 +47,18 @@
             android:theme="@style/Theme.Frontend_mobile" />
         <activity android:name=".NotificationsActivity"
             android:theme="@style/Theme.Frontend_mobile"/>
+        <activity
+            android:name=".CreateCardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Frontend_mobile" />
+        <activity
+            android:name=".OpenFlashcardsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Frontend_mobile" />
+        <activity
+            android:name=".EditCardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Frontend_mobile" />
 
     </application>
 
