@@ -5,6 +5,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,9 @@ public class ProgressService {
 
     private final Firestore firestore;
     private static final String COLLECTION_NAME = "progress";
+
+    @Autowired
+    private AchievementService achievementService;
 
     public ProgressService() {
         this.firestore = FirestoreClient.getFirestore();
@@ -67,5 +71,36 @@ public class ProgressService {
     public void deleteProgress(String id) throws ExecutionException, InterruptedException {
         ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(id).delete();
         future.get();
+    }
+
+    public void trackStudyTime(String userId, int minutesSpent) throws ExecutionException, InterruptedException {
+        // Save the study session
+        ProgressEntity progress = new ProgressEntity();
+        progress.setFlashCardId(null); // Not tied to a specific flashcard
+        progress.setScore(0); // Not relevant for study mode
+        progress.setTimeSpent(minutesSpent);
+        progress.setScoreComparison(null); // Not relevant for study mode
+        createProgress(progress);
+
+        // Check if the user has spent 30 minutes in study mode
+        List<ProgressEntity> progressList = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("userId", userId)
+                .get()
+                .get()
+                .getDocuments()
+                .stream()
+                .map(doc -> doc.toObject(ProgressEntity.class))
+                .collect(Collectors.toList());
+
+        int totalMinutes = progressList.stream().mapToInt(ProgressEntity::getTimeSpent).sum();
+
+        if (totalMinutes >= 30) {
+            // Unlock the "Study Streak" achievement
+            achievementService.unlockAchievement(
+                    userId,
+                    "Study Streak",
+                    "Spend 30 minutes in study mode"
+            );
+        }
     }
 }

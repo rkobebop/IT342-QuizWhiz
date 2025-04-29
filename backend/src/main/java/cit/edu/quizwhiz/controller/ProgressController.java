@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/progress")
-@CrossOrigin(origins = "*")
 public class ProgressController {
 
     private final ProgressService progressService;
@@ -86,7 +85,6 @@ public class ProgressController {
         }
     }
 
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteProgress(@PathVariable String id) {
         try {
@@ -102,6 +100,25 @@ public class ProgressController {
                     .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Track study time for a user and unlock the "Study Streak" achievement if applicable.
+     * @param userId The ID of the user.
+     * @param minutesSpent The number of minutes spent in study mode.
+     * @return HTTP 200 if the study time is tracked successfully.
+     */
+    @PostMapping("/trackStudyTime")
+    public ResponseEntity<Void> trackStudyTime(
+            @RequestParam String userId,
+            @RequestParam int minutesSpent) {
+        try {
+            progressService.trackStudyTime(userId, minutesSpent);
+            return ResponseEntity.ok().build();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

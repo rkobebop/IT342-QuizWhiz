@@ -21,6 +21,8 @@ public class DeckController {
 
     @Autowired
     private DeckService deckService;
+
+    @Autowired
     private FlashcardService flashcardService;
 
     @PostMapping

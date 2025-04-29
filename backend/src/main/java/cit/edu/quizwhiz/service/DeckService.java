@@ -5,6 +5,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,20 +19,43 @@ public class DeckService {
     private final Firestore firestore;
     private static final String COLLECTION_NAME = "decks";
 
+    @Autowired
+    private AchievementService achievementService;
+
     public DeckService() {
         this.firestore = FirestoreClient.getFirestore();
     }
 
     public DeckEntity createDeck(DeckEntity deck) throws ExecutionException, InterruptedException {
+        // Check if this is the user's first deck
+        ApiFuture<QuerySnapshot> queryFuture = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("userId", deck.getUserId())
+                .get();
+
+        List<QueryDocumentSnapshot> userDecks = queryFuture.get().getDocuments();
+        boolean isFirstDeck = userDecks.isEmpty();
+
+        // Now create and save the deck
         DocumentReference docRef = firestore.collection(COLLECTION_NAME).document(); // Auto-generated ID
         deck.setId(docRef.getId());
         deck.setCreatedAt(Timestamp.now());
         deck.setUpdatedAt(Timestamp.now());
 
         ApiFuture<WriteResult> future = docRef.set(deck);
-        future.get(); // Wait for the operation to complete
+        future.get();
+
+        // Unlock achievement only if it's the first deck
+        if (isFirstDeck) {
+            achievementService.unlockAchievement(
+                    deck.getUserId(),
+                    "Deck Creator",
+                    "Create your first deck"
+            );
+        }
+
         return deck;
     }
+
 
 
     public List<DeckEntity> getAllDecks() throws ExecutionException, InterruptedException {

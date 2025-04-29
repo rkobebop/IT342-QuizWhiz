@@ -87,7 +87,6 @@ public class QuizController {
         }
     }
 
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteQuiz(@PathVariable String id) {
         try {
@@ -115,6 +114,29 @@ public class QuizController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    /**
+     * Complete a quiz and check for achievements.
+     * @param userId The ID of the user.
+     * @param quizId The ID of the quiz.
+     * @param score The score the user achieved.
+     * @return HTTP 200 if the quiz is processed successfully.
+     */
+    @PostMapping("/complete")
+    public ResponseEntity<Void> completeQuiz(
+            @RequestParam String userId,
+            @RequestParam String quizId,
+            @RequestParam int score) {
+        try {
+            quizService.completeQuiz(userId, quizId, score);
+            return ResponseEntity.ok().build();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(null);
         }
     }
 }

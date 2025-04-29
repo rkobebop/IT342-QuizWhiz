@@ -40,7 +40,6 @@ public class SecurityConfig {
                                 "/user/login",
                                 "/user/google",
                                 "/user/create",
-                                "/flashcards",
                                 "/oauth/**"
                         ).permitAll()
                         .requestMatchers("/user/**","/deck/**").authenticated()
