@@ -36,8 +36,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/").permitAll() // Add this line
                         .requestMatchers(HttpMethod.POST,
                                 "/user/login",
+                                "/admin/login",
                                 "/user/google",
                                 "/user/create",
                                 "/oauth/**"

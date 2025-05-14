@@ -167,6 +167,35 @@ public class UserService {
         return user;
     }
 
+    // Change user password
+    public boolean changePassword(String userId, String currentPassword, String newPassword)
+            throws ExecutionException, InterruptedException {
+
+        // Retrieve user by ID
+        Optional<UserEntity> userOpt = getUserById(userId);
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        UserEntity user = userOpt.get();
+
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            return false; // Incorrect current password
+        }
+
+        // Hash and set new password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setUpdatedAt(Timestamp.now());
+
+        // Update user in database
+        DocumentReference docRef = firestore.collection(COLLECTION_NAME).document(userId);
+        ApiFuture<WriteResult> future = docRef.set(user);
+        future.get(); // Wait for the update to complete
+
+        return true;
+    }
+
 
     // Get user count
     public long getUserCount() throws ExecutionException, InterruptedException {

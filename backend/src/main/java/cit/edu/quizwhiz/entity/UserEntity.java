@@ -10,7 +10,7 @@ public class UserEntity {
     private String lastName;
     private String email;
     private String password;
-    private String role; // STUDENT, EDUCATOR, ADMIN
+    private String role; // STUDENT, EDUCATOR
     private String profilePictureUrl;
     private Timestamp createdAt;
     private Timestamp updatedAt;

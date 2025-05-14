@@ -6,6 +6,8 @@ import com.google.firebase.FirebaseOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
 import java.util.Objects;
@@ -36,4 +38,13 @@ public class QuizWhizApplication {
 		SpringApplication.run(QuizWhizApplication.class, args);
 	}
 
+}
+
+// Add the controller.
+@RestController
+class HelloWorldController {
+	@GetMapping("/")
+	public String hello() {
+		return "hello world!";
+	}
 }
